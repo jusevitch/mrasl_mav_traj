@@ -3,6 +3,11 @@ function make_CF_file(solution,num_waypoints,polynomial_order,time_vector,filena
 % make sure no exponential notation is in solution
 solution = round(solution,6);
 
+old_time = time_vector
+diff_mat = -eye(length(old_time)) + diag(ones(length(old_time)-1,1),1);
+diff_mat = diff_mat(1:end-1,:);
+time_vector = diff_mat*old_time';
+
 num_states = size(solution,2);
 
 % Polynomial vectors in solution are sorted as follows:
@@ -14,7 +19,7 @@ for ii=1:num_waypoints-1 % B/C initial (or last) waypoint not included in soluti
     for jj=1:num_states
         state_idx_start = 1 + (jj-1)*(polynomial_order+1); % Where the state begins
         
-        M(ii,state_idx_start + 1 : state_idx_start + polynomial_order + 1) = solution(solution_vector_start : solution_vector_start + polynomial_order,jj);
+        M(ii,state_idx_start + 1 : state_idx_start + polynomial_order + 1) = flip(solution(solution_vector_start : solution_vector_start + polynomial_order,jj));
     end
 end
 

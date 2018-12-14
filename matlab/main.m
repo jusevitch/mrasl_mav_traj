@@ -19,9 +19,9 @@ k_r = 4;    % Order of derivative of the position
 k_psi = 2;  % Order of derivative of the yaw
 mu_r = 1;   % Non-dimentionalization constant for the position integral
 mu_psi = 1; % Non-dimentionalization constant for the yaw integral
-n = 6;      % Order of the polynomials describing the trajectory
+n = 7;      % Order of the polynomials describing the trajectory
 m = 8;      % Number of waypoints (not including initial conditions)
-states = 3;
+states = 4;
 
 % For a quadratic optimization problem of the form
 %   min c'Hc + f'c
@@ -34,7 +34,7 @@ states = 3;
 % 4*(n+1)*m x 1
 
 % Time constraints
-t = [0 1 2 3 4 5 6 7 8];
+t = [0 1 2 3 4 5 6 7 8]*2;
 %t = [0 0.5 2.5 3];
 
 % Waypoint constraints
@@ -48,21 +48,21 @@ t = [0 1 2 3 4 5 6 7 8];
 %     wp7 << -4, 0, 2;
 %     wp8 << -2, 2, 1.5;
 %     wp9 << 0, 0, 1;
-w(:, :, 1) = [  0 2   4   2   0   -2  -4  -2  0; ...
+w(:, :, 1) = [  0 0   0   0   0   0  0  0  0; ...
                 0 Inf Inf Inf Inf Inf Inf Inf 0; ...  % velocity constraints
                 0 Inf Inf Inf Inf Inf Inf Inf 0; ...  % acceleration constraints
                 0 Inf Inf Inf Inf Inf Inf Inf 0; ...  % jerk constraints
                 0 Inf Inf Inf Inf Inf Inf Inf 0];     % snap constraints
             
 % Y axis
-w(:, :, 2) = [  0   -2  0   2   0   -2  0   2   0; ...
+w(:, :, 2) = [  0   -1  0   1   0   -1  0   1  0; ...
                 0   Inf Inf Inf Inf Inf Inf Inf 0; ...  % velocity constraints
                 0   Inf Inf Inf Inf Inf Inf Inf 0; ...  % acceleration constraints
                 0   Inf Inf Inf Inf Inf Inf Inf 0; ...  % jerk constraints
                 0   Inf Inf Inf Inf Inf Inf Inf 0];     % snap constraints
             
 % Z axis
-w(:, :, 3) = [  1   1.5 2   1.5 1   1.5 2   1.5 1; ...
+w(:, :, 3) = [  1   2 3   2 1   2 3   2 1; ...
                 0   Inf Inf Inf Inf Inf Inf Inf 0; ...  % velocity constraints
                 0   Inf Inf Inf Inf Inf Inf Inf 0; ...  % acceleration constraints
                 0   Inf Inf Inf Inf Inf Inf Inf 0; ...  % jerk constraints
@@ -146,6 +146,8 @@ for der=1:k_r-1
                 s = ' y';
             case 3
                 s = ' z';
+            case 4
+                s = ' psi';
         end
         xlabel('time');
         switch der-1
